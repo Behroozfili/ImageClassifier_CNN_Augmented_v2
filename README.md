@@ -1,114 +1,122 @@
-🐱🐶 Cat & Dog Image Classification using CNN
-Author: Behrooz Filzadeh
+
+markdown
+Copy
+Edit
+# 🐱🐶 Cat & Dog Image Classification using CNN  
+**Author: Behrooz Filzadeh**
 
 This project implements a Convolutional Neural Network (CNN) using Keras (TensorFlow backend) to classify images of cats and dogs. It covers all major steps: data loading, preprocessing, training, evaluation, and prediction. OpenCV is used for image handling, and joblib for caching and label encoding.
 
-📚 Table of Contents
-Features
+---
 
-Project Structure
+## 📚 Table of Contents
 
-Prerequisites
+- [Features](#features)  
+- [Project Structure](#project-structure)  
+- [Prerequisites](#prerequisites)  
+- [Setup](#setup)  
+  - [1. Clone Repository](#1-clone-repository)  
+  - [2. Create Virtual Environment (Recommended)](#2-create-virtual-environment-recommended)  
+  - [3. Install Dependencies](#3-install-dependencies)  
+  - [4. Prepare Dataset](#4-prepare-dataset)  
+- [Usage](#usage)  
+  - [1. Training the Model](#1-training-the-model)  
+  - [2. Making Predictions](#2-making-predictions)  
+- [Model Architecture](#model-architecture)  
+- [Results & Evaluation](#results--evaluation)  
+- [File Descriptions](#file-descriptions)  
+- [Customization](#customization)  
+- [License](#license)  
 
-Setup
+---
 
-Usage
+## ✅ Features
 
-Model Architecture
+- **Data Loading & Preprocessing:**  
+  - Loads images recursively from specified folders.  
+  - Resizes images to a consistent size (64x64 pixels).  
+  - Normalizes pixel values to [0, 1].  
+  - Uses `joblib` to cache/load processed datasets for faster subsequent runs.
 
-Results & Evaluation
+- **Data Augmentation:**  
+  - Real-time augmentation with `ImageDataGenerator` (rotation, shift, shear, zoom, horizontal flip) to improve generalization.
 
-File Descriptions
+- **CNN Model:**  
+  - Custom architecture with Conv2D, BatchNormalization, MaxPooling2D, Flatten, Dense, Dropout layers.  
+  - L2 regularization applied in dense layers.
 
-Customization
+- **Training & Callbacks:**  
+  - Adam optimizer with a learning rate of 0.0001.  
+  - `ReduceLROnPlateau` to reduce learning rate on plateau in validation loss.  
+  - `EarlyStopping` to stop training early when validation loss stops improving.
 
-License
+- **Evaluation:**  
+  - Plots for training/validation loss and accuracy.  
+  - Confusion matrix heatmap.  
+  - Classification report with precision, recall, and F1-score.
 
-✅ Features
-Data Handling
+- **Model Persistence:**  
+  - Saves trained model in `.keras` format.  
+  - Saves `LabelEncoder` using `joblib` as `.pkl` file.
 
-Recursive image loading from subfolders
+- **Prediction on New Images:**  
+  - Loads saved model and label encoder.  
+  - Predicts classes for images in a specified folder.  
+  - Annotates and displays images with predicted labels using OpenCV.
 
-Resizes images to 64x64 pixels
+---
 
-Normalizes pixel values (0–1 range)
+## 📁 Project Structure
 
-Caches processed dataset using joblib for faster re-runs
-
-Data Augmentation
-
-Real-time augmentation using ImageDataGenerator (rotation, shifts, zoom, flip, etc.)
-
-CNN Architecture
-
-Custom CNN with Conv2D, MaxPooling, BatchNormalization, Dropout, and Dense layers
-
-Includes L2 regularization
-
-Training Utilities
-
-Optimizer: Adam with learning rate scheduling
-
-EarlyStopping and ReduceLROnPlateau callbacks
-
-Evaluation Tools
-
-Plots for accuracy/loss
-
-Confusion matrix heatmap
-
-Precision, recall, and F1-score report
-
-Persistence
-
-Saves trained model (.keras) and label encoder (.pkl)
-
-Predicts on new images with annotated output via OpenCV
-
-📁 Project Structure
-kotlin
-Copy
-Edit
 cat-dog-classification/
 ├── data/
-│   ├── train/
-│   │   ├── Cat/
-│   │   └── Dog/
-│   └── test_images/
-├── saved_models/
-│   ├── cat_dog_optimized_v2.keras
-│   └── label_encoder.pkl
-├── train_model.py
-├── predict_images.py
-├── requirements.txt
-└── README.md
-⚠️ Note: Update any hardcoded absolute paths like E:\machinlerning\... to use relative paths for better portability.
+│ ├── train/ # Training images folder
+│ │ ├── Cat/ # Cat images
+│ │ └── Dog/ # Dog images
+│ └── test_images/ # Images for prediction/testing
+├── saved_models/ # Saved model and label encoder
+│ ├── cat_dog_optimized_v2.keras
+│ └── label_encoder.pkl
+├── train_model.py # Training script
+├── predict_images.py # Prediction script
+├── requirements.txt # Python dependencies
+└── README.md # This file
 
-💻 Prerequisites
-Python 3.7+
-
-pip (Python package manager)
-
-Git
-
-⚙️ Setup
-1. Clone the Repository
-bash
+yaml
 Copy
 Edit
-git clone <your-repo-url>
+
+**Note:**  
+The script uses an absolute path by default. Modify `dataset_folder_path` and other paths to relative paths or your local setup as needed.
+
+---
+
+## ⚙️ Prerequisites
+
+- Python 3.7+  
+- pip (Python package installer)  
+- Git (for cloning repository)
+
+---
+
+## 🛠 Setup
+
+### 1. Clone Repository
+
+```bash
+git clone <your-repository-url>
 cd cat-dog-classification
-2. Create a Virtual Environment (Recommended)
+2. Create Virtual Environment (Recommended)
 bash
 Copy
 Edit
 python -m venv venv
-# Windows:
+# Windows
 venv\Scripts\activate
-# macOS/Linux:
+# macOS/Linux
 source venv/bin/activate
 3. Install Dependencies
-First, ensure requirements.txt contains:
+Create a requirements.txt file with:
 
 nginx
 Copy
@@ -127,94 +135,91 @@ Copy
 Edit
 pip install -r requirements.txt
 4. Prepare Dataset
-Create folders:
+Create data/train/ directory.
 
-bash
-Copy
-Edit
-data/train/Cat/
-data/train/Dog/
-data/test_images/
-Put cat and dog images into their respective folders.
+Inside data/train/, create Cat/ and Dog/ folders.
+
+Place cat images inside Cat/ and dog images inside Dog/.
+
+(Optional) Create data/test_images/ for prediction testing.
 
 🚀 Usage
-1. Train the Model
-Edit train_model.py and set:
+1. Training the Model
+Update paths in train_model.py (e.g., dataset_folder_path = "data/train").
 
-python
-Copy
-Edit
-dataset_folder_path = "data/train"
-model.save("saved_models/cat_dog_optimized_v2.keras")
-dump(label_encoder, "saved_models/label_encoder.pkl")
-Then run:
+Update model and label encoder save paths if needed.
+
+Run training:
 
 bash
 Copy
 Edit
 python train_model.py
-The script will preprocess and cache the data, train the model, and save the model and label encoder.
+The script will preprocess data, train the CNN, show training progress and plots, and save the model and label encoder.
 
-2. Predict New Images
-Edit predict_images.py:
+2. Making Predictions
+Update paths in predict_images.py for the model, label encoder, and test images folder.
 
-python
-Copy
-Edit
-model_path = "saved_models/cat_dog_optimized_v2.keras"
-label_encoder_path = "saved_models/label_encoder.pkl"
-test_images_folder_path = "data/test_images"
-Then run:
+Run prediction:
 
 bash
 Copy
 Edit
 python predict_images.py
-The script will annotate and display predicted labels on your test images.
+The script will predict classes for images, annotate them, and display one by one.
 
-🧠 Model Architecture
-Input: (64, 64, 3)
-Layers:
+🏗 Model Architecture
+Input: Images resized to (64, 64, 3)
 
-Conv2D (32 filters) + BatchNorm + MaxPooling
+Conv Block 1: Conv2D(32 filters, 3x3), ReLU, BatchNorm, MaxPooling(2x2)
 
-Conv2D (64 filters) + BatchNorm + MaxPooling
+Conv Block 2: Conv2D(64 filters, 3x3), ReLU, BatchNorm, MaxPooling(2x2)
 
-Conv2D (128 filters) + BatchNorm + MaxPooling
+Conv Block 3: Conv2D(128 filters, 3x3), ReLU, BatchNorm, MaxPooling(2x2)
 
 Flatten
 
-Dense (256 units, ReLU, L2) + Dropout (0.5) + BatchNorm
+Dense(256 units, ReLU, L2 regularization)
 
-Output Dense (Softmax for classification)
+Dropout(0.5)
 
-Compiled with:
-Adam(learning_rate=0.0001) + categorical_crossentropy
+BatchNormalization
+
+Output Dense layer with softmax activation (number of classes)
+
+Optimizer: Adam (lr=0.0001)
+Loss: Categorical Cross-Entropy
 
 📊 Results & Evaluation
-After training, you’ll get:
+Training and validation loss/accuracy curves plotted.
 
-Accuracy/loss plots (matplotlib)
+Confusion matrix heatmap displayed.
 
-Confusion matrix (seaborn heatmap)
+Classification report printed with precision, recall, F1-score, and support.
 
-Classification report (scikit-learn)
+Final test accuracy and loss printed in console.
 
-Final test accuracy printed in the terminal
+📂 File Descriptions
+train_model.py: Loads data, trains model, evaluates, saves model and label encoder.
 
-📄 File Descriptions
-File	Description
-train_model.py	Loads and trains the CNN, saves model & encoder
-predict_images.py	Predicts and displays labeled images
-requirements.txt	Python dependencies
-dataset_processed.joblib	Cached processed images & labels
-saved_models/	Stores model (.keras) & encoder (.pkl)
+predict_images.py: Loads model and encoder, predicts on new images, displays results.
 
-🔧 Customization
-Option	How to Modify
-Image size	In process_image() and CNN input layer
-Model layers	Edit build_simple_model()
-Augmentation	Change ImageDataGenerator settings
-Hyperparameters	Adjust learning rate, dropout, epochs, etc.
-Dataset paths	Update dataset_folder_path and related paths
+requirements.txt: Python package dependencies.
+
+dataset_processed.joblib: Cached processed dataset (generated by train_model.py).
+
+saved_models/cat_dog_optimized_v2.keras: Saved Keras model file.
+
+saved_models/label_encoder.pkl: Saved LabelEncoder file.
+
+🎨 Customization
+Change image size in process_image and model input shape.
+
+Adjust model layers, units, filters, activations in build_simple_model.
+
+Tune hyperparameters like learning rate, batch size, epochs, dropout rate, regularization strength.
+
+Modify data augmentation parameters in ImageDataGenerator.
+
+Update dataset and save paths to match your environment.
 
